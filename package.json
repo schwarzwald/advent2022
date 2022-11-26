@@ -1,0 +1,28 @@
+{
+  "name": "advent2022",
+  "version": "1.0.0",
+  "description": "Solutions to AoC 2022",
+  "scripts": {
+    "all": "node all.js",
+    "test": "mocha day*/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schwarzwald/advent2021.git"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "mocha": "^6.2.2"
+  },
+  "keywords": [
+    "advent-of-code",
+    "advent-of-code-2022",
+    "aoc2022"
+  ],
+  "author": "schwarzwald",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/schwarzwald/advent2022/issues"
+  },
+  "homepage": "https://github.com/schwarzwald/advent2022#readme"
+}

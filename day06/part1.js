@@ -1,0 +1,1 @@
+module.exports = input => [...input].findIndex((v, i, arr) => i > 2 && new Set(arr.slice(i - 3, i + 1)).size == 4) + 1;

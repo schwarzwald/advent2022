@@ -28,6 +28,7 @@ module.exports = input => {
     }
   }
 
+  let valves = [...map.keys()].filter(k => map.get(k).rate != 0);
   let state = { room: 'AA', time: 30, score: 0, opened: new Set() };
   let queue = [state];
   let max = 0;
@@ -37,17 +38,18 @@ module.exports = input => {
     if (current.time == 0) {
       continue;
     }
-    for (let key of map.keys()) {
-      if (!current.opened.has(key) && key != current.room && map.get(key).rate != 0) {
+    for (let key of valves) {
+      if (!current.opened.has(key) && key != current.room) {
         let dist = map.get(current.room).distances.get(key);
         let time = current.time - dist - 1;
         let newScore = current.score + map.get(key).rate * time;
 
-        if (time >= 0) {
+        max = Math.max(max, newScore);
+
+        if (time > 0) {
           let newOpened = new Set(current.opened);
           newOpened.add(key);
           queue.push({ room: key, time: time, score: newScore, opened: newOpened });
-          max = Math.max(max, newScore);
         }
       }
     }

@@ -1,22 +1,5 @@
 const coords = (x, y) => `${x}#${y}`;
 
-const area = map => {
-  let minX = 1000;
-  let maxX = -1000;
-  let minY = 1000;
-  let maxY = -1000;
-
-  for (let key of map.keys()) {
-    let { x, y } = map.get(key);
-    minX = Math.min(minX, x);
-    maxX = Math.max(maxX, x);
-    minY = Math.min(minY, y);
-    maxY = Math.max(maxY, y);
-  }
-
-  return (maxX - minX + 1) * (maxY - minY + 1);
-}
-
 module.exports = input => {
   let lines = input.split(/\r?\n/);
   let map = new Map();

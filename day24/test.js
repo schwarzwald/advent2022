@@ -13,7 +13,7 @@ describe('Day 24: Part 1', () => {
   });
 });
 describe('Day 24: Part 2', () => {
-  it('Should', () => {
+  it('Should find shortest path from start to end, back to start and back to and again', () => {
     expect(part2(`#.######
 #>>.<^<#
 #.<..<<#

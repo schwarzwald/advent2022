@@ -8,7 +8,7 @@ const rotate = (cube, rot) => {
 
   for (let key of cube.keys()) {
     let { value, x, y, z, px, py } = cube.get(key);
-    let [cx, cy, cz] = mul([x, y, z], rotMatrix(rot));
+    let [cx, cy, cz] = mul([x, y, z], rot);
 
     rotated.set(coords(cx, cy, cz), {
       value: value,
@@ -23,43 +23,13 @@ const rotate = (cube, rot) => {
 }
 
 const mul = (vec3, mat3) => {
-  let res = [0, 0, 0];
-
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      res[i] += vec3[j] * mat3[j][i];
-    }
-  }
-  return res;
-}
-
-const rotMatrix = rot => {
-  switch (rot) { // 1 - UP, 2 - DOWN, 3 - LEFT, 4 - RIGHT
-    case 1: return UP;
-    case 2: return DOWN;
-    case 3: return LEFT;
-    case 4: return RIGHT;
-  }
+  return [
+    vec3[0] * mat3[0][0] + vec3[1] * mat3[1][0] + vec3[2] * mat3[2][0],
+    vec3[0] * mat3[0][1] + vec3[1] * mat3[1][1] + vec3[2] * mat3[2][1],
+    vec3[0] * mat3[0][2] + vec3[1] * mat3[1][2] + vec3[2] * mat3[2][2]];
 }
 
 const coords = (x, y, z) => `${x}#${y}#${z}`;
-
-const print = (cube, size, px, py) => {
-  let rr = '';
-  for (let dy = 0; dy < size; dy++) {
-    for (let dx = 0; dx < size; dx++) {
-      if (px == dx && py == dy) {
-        rr += '@';
-      } else {
-        rr += get(cube, size, dx, dy).value;
-      }
-    }
-    rr += '\n';
-  }
-  console.clear();
-  console.log(rr);
-
-}
 
 const get = (cube, size, fx, fy) => {
   let offset = 0.5;
@@ -96,12 +66,11 @@ const rotLeft = side => {
 }
 
 module.exports = input => {
-
   let lines = input.split(/\r?\n/);
   let instructionsRaw = lines[lines.length - 1]
 
   let size = lines.length > 50 ? 50 : 4;
-  let offset = 0.5;
+  let offset = size % 2 == 0 ? 0.5 : 0;
   let half = size / 2 + offset;
 
   let grid = lines.slice(0, lines.length - 2).map(r => [...r]);
@@ -123,41 +92,41 @@ module.exports = input => {
   let x = pos[0];
   let y = 0;
 
-  let stack = [{ r: 0, p: [x, y] }]; // 1 - UP, 2 - DOWN, 3 - LEFT, 4 - RIGHT
+  let stack = [{ r: 0, p: [x, y] }];
   let queue = [[pos, null, stack]];
   while (queue.length) {
     let [[px, py], prev, mid] = queue.pop();
 
-    if (prev != 4 && px + size < maxWidth && grid[py][px + size] != ' ') {
+    if (prev != RIGHT && px + size < maxWidth && grid[py][px + size] != ' ') {
       let m = [];
-      mid.push({ r: 3, p: [px + size, py] });
+      mid.push({ r: LEFT, p: [px + size, py] });
       mid.push(m);
-      mid.push({ r: 4 });
-      queue.push([[px + size, py], 3, m]); // LEFT
+      mid.push({ r: RIGHT });
+      queue.push([[px + size, py], LEFT, m]);
     }
 
-    if (prev != 3 && px - size >= 0 && grid[py][px - size] != ' ') {
+    if (prev != LEFT && px - size >= 0 && grid[py][px - size] != ' ') {
       let m = [];
-      mid.push({ r: 4, p: [px - size, py] });
+      mid.push({ r: RIGHT, p: [px - size, py] });
       mid.push(m);
-      mid.push({ r: 3 });
-      queue.push([[px - size, py], 4, m]); // RIGHT
+      mid.push({ r: LEFT });
+      queue.push([[px - size, py], RIGHT, m]);
     }
 
-    if (prev != 2 && py + size < grid.length && grid[py + size][px] != ' ') {
+    if (prev != DOWN && py + size < grid.length && grid[py + size][px] != ' ') {
       let m = [];
-      mid.push({ r: 1, p: [px, py + size] });
+      mid.push({ r: UP, p: [px, py + size] });
       mid.push(m);
-      mid.push({ r: 2 });
-      queue.push([[px, py + size], 1, m]); // UP
+      mid.push({ r: DOWN });
+      queue.push([[px, py + size], UP, m]);
     }
 
-    if (prev != 1 && py - size >= 0 && grid[py - size][px] != ' ') {
+    if (prev != UP && py - size >= 0 && grid[py - size][px] != ' ') {
       let m = [];
-      mid.push({ r: 2, p: [px, py - size] });
+      mid.push({ r: DOWN, p: [px, py - size] });
       mid.push(m);
-      mid.push({ r: 1 });
-      queue.push([[px, py - size], 2, m]);//DOWN
+      mid.push({ r: UP });
+      queue.push([[px, py - size], DOWN, m]);
     }
   }
 
@@ -227,23 +196,23 @@ module.exports = input => {
         let [x, y] = [pos[0] + dir[0], pos[1] + dir[1]];
         if (dir[0] < 0) {
           if (x < 0) {
-            rotated = rotate(cube, 4);
+            rotated = rotate(cube, RIGHT);
             x = size - 1;
           }
         } else if (dir[0] > 0) {
           if (x > size - 1) {
-            rotated = rotate(cube, 3);
+            rotated = rotate(cube, LEFT);
             x = 0;
           }
         } else if (dir[1] < 0) {
           if (y < 0) {
             y = size - 1;
-            rotated = rotate(cube, 2);
+            rotated = rotate(cube, DOWN);
           }
         } else if (dir[1] > 0) {
           if (y > size - 1) {
             y = 0;
-            rotated = rotate(cube, 1);
+            rotated = rotate(cube, UP);
           }
         }
 

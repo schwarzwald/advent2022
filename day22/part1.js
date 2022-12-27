@@ -13,8 +13,6 @@ module.exports = input => {
     }
   }
 
-
-
   let pos = [grid[0].indexOf('.'), 0];
   let dir = [1, 0];
 
@@ -40,8 +38,6 @@ module.exports = input => {
 
 
   for (let instr of instructions) {
-    // console.clear();
-    // console.log(grid.map((r, ry) => r.map((c, cx) => ry == pos[1] && cx == pos[0] ? '@' : c).join('')).join('\n'));
     if (instr == 'L') {
       dir = [dir[1], -dir[0]];
     } else if (instr == 'R') {
